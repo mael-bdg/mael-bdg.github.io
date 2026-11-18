@@ -128,6 +128,13 @@
   .landmark {padding:5px 7px;font-size:.65rem}
   .discovery-item {grid-template-columns:57px 1fr}
 }
+.discovery-panel[data-mode="tower"] {width:min(480px,calc(100% - 16px))}
+.tower-view {margin:0}
+.tower-view img {
+  display:block;width:100%;aspect-ratio:16 / 9;object-fit:cover;
+  border-radius:5px;border:1px solid #86647e;background:#30233b;
+}
+.tower-view figcaption {margin-top:9px;font-size:.86rem;line-height:1.5}
 </style>
 </head>
 <body>
@@ -188,6 +195,7 @@
   const panel = map.querySelector('.discovery-panel');
   const panelTitle = panel.querySelector('h2');
   const panelItems = panel.querySelector('.discovery-items');
+  const towerPicture = document.createElement('img');
   const closePanel = panel.querySelector('.discovery-close');
   const found = new Set();
   const artworkTitles = [
@@ -271,6 +279,22 @@
   function updatePanel() {
     if (!panelMode) return;
     const english = document.documentElement.lang === 'en';
+    panel.dataset.mode = panelMode;
+    if (panelMode === 'tower') {
+      panelTitle.textContent = english ? 'Seoul Tower' : 'Tour de Séoul';
+      const item = document.createElement('li');
+      const view = document.createElement('figure');
+      view.className = 'tower-view';
+      towerPicture.alt = english ? 'The illuminated tower above Seoul at dusk' : 'La tour illuminée au-dessus de Séoul au crépuscule';
+      const caption = document.createElement('figcaption');
+      caption.textContent = english ? 'From the top of Namsan, the city lights stretch out below.'
+        : 'Du sommet du Namsan, les lumières de la ville s’étendent à perte de vue.';
+      view.append(towerPicture, caption);
+      item.append(view);
+      panelItems.replaceChildren(item);
+      panel.hidden = false;
+      return;
+    }
     const isCase = panelMode === 'case';
     panelTitle.textContent = isCase ? (english ? 'Travel suitcase' : 'Valise de voyage')
       : (english ? 'Secret discovered' : 'Secret découvert');
@@ -306,17 +330,25 @@
     map.focus({preventScroll:true});
   }
 
-  function alignLandmarks() {
+  function mapPicturePoint(worldX, worldY) {
     const width = map.clientWidth;
     const height = map.clientHeight;
     const pictureWidth = artwork.naturalWidth || 1536;
     const pictureHeight = artwork.naturalHeight || 1024;
     const scale = Math.max(width / pictureWidth, height / pictureHeight);
+    const x = width / 2 + (worldX - .5) * pictureWidth * scale;
+    const y = height / 2 + (worldY - .5) * pictureHeight * scale;
+    return {
+      x: Math.max(37, Math.min(width - 37, x)),
+      y: Math.max(28, Math.min(height - 28, y)),
+    };
+  }
+
+  function alignLandmarks() {
     for (const landmark of landmarks) {
-      const x = width / 2 + (Number(landmark.dataset.worldX) - .5) * pictureWidth * scale;
-      const y = height / 2 + (Number(landmark.dataset.worldY) - .5) * pictureHeight * scale;
-      landmark.style.setProperty('--hot-x', `${Math.max(37, Math.min(width - 37, x))}px`);
-      landmark.style.setProperty('--hot-y', `${Math.max(28, Math.min(height - 28, y))}px`);
+      const {x, y} = mapPicturePoint(Number(landmark.dataset.worldX), Number(landmark.dataset.worldY));
+      landmark.style.setProperty('--hot-x', `${x}px`);
+      landmark.style.setProperty('--hot-y', `${y}px`);
     }
     render();
   }
@@ -329,11 +361,12 @@
     const first = landmarks.find(landmark => landmark.dataset.landmark === 'train');
     const x = parseFloat(first.style.getPropertyValue('--hot-x')) / map.clientWidth;
     const y = parseFloat(first.style.getPropertyValue('--hot-y')) / map.clientHeight;
-    const destination = landmarks.find(landmark => landmark.dataset.landmark === 'case');
-    const arrivalX = (parseFloat(destination.style.getPropertyValue('--hot-x')) - 18) / map.clientWidth;
-    const arrivalY = (parseFloat(destination.style.getPropertyValue('--hot-y')) + 18) / map.clientHeight;
+    if (!towerPicture.hasAttribute('src')) towerPicture.src = 'tour-seoul.webp';
+    const tower = mapPicturePoint(.894, .223);
+    const arrivalX = tower.x / map.clientWidth;
+    const arrivalY = tower.y / map.clientHeight;
     riding = true;
-    trainMessage = ['Prochain arrêt : la gare du lac !', 'Next stop: Lakeside Station!'];
+    trainMessage = ['Prochain arrêt : la tour de Séoul !', 'Next stop: Seoul Tower!'];
     avatar.classList.add('is-riding');
     positionAt(x, y);
     updateStatus();
@@ -341,15 +374,19 @@
     function ride(time) {
       const progress = reducedMotion ? 1 : Math.min(1,(time - started) / 1650);
       const eased = progress * progress * (3 - 2 * progress);
-      positionAt(x + (arrivalX - x) * eased, y + (arrivalY - y) * eased - .13 * Math.sin(Math.PI * eased));
+      positionAt(x + (arrivalX - x) * eased - .07 * Math.sin(Math.PI * eased),
+        y + (arrivalY - y) * eased);
       if (progress < 1) {
         requestAnimationFrame(ride);
         return;
       }
       riding = false;
       avatar.classList.remove('is-riding');
-      trainMessage = ['Arrivée à la gare du lac.', 'Arrived at Lakeside Station.'];
+      trainMessage = ['Arrivée à la tour de Séoul.', 'Arrived at Seoul Tower.'];
+      panelMode = 'tower';
+      updatePanel();
       updateStatus();
+      closePanel.focus({preventScroll:true});
     }
     requestAnimationFrame(ride);
   }
