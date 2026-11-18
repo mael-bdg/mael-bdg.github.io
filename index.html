@@ -9,40 +9,6 @@
 <script src="js/projets.js" defer></script>
 <script src="js/liens-projets.js" defer></script>
 <script src="js/language.js" defer></script>
-<style>
-.map:focus-visible {outline:2px solid var(--mint);outline-offset:3px}
-.atlas-header .map-start {
-  color:var(--gold);background:#312638;border:1px solid #8f6859;
-  border-radius:4px;padding:5px 8px;font:700 .72rem var(--mono);cursor:pointer;
-}
-.map-start:hover {background:#463244}
-.map-avatar {
-  position:absolute;z-index:3;left:var(--player-x,9%);top:var(--player-y,85%);
-  width:30px;height:35px;padding-bottom:2px;transform:translate(-50%,-85%);
-  display:grid;place-items:center;pointer-events:none;
-  filter:drop-shadow(0 2px 1px #160e1a);
-}
-.map-avatar[hidden],.map-start[hidden],.map-guide[hidden] {display:none}
-.map-avatar::before {
-  content:"";position:absolute;bottom:2px;width:28px;height:9px;
-  border-radius:50%;background:#251931;border:1px solid #ffc77d;
-}
-.map-avatar canvas {
-  position:relative;width:24px;height:28px;image-rendering:pixelated;
-  margin-bottom:6px;transform:scaleX(var(--facing,1));
-}
-.map .pin.is-near {
-  color:#252038;background:var(--mint);border-color:#effae6;
-  box-shadow:0 0 0 4px #201b34ae,0 0 14px #91e4cc;
-}
-.map .pin.is-near .pin-label {color:var(--mint)}
-.map-guide {
-  border-top:1px solid var(--line);margin-top:6px;padding:8px 10px 4px;
-  color:var(--muted);font-size:.75rem;line-height:1.45;
-}
-.map-guide kbd {font:700 .75rem var(--mono);color:var(--gold)}
-.map-status:not(:empty) {display:block;color:var(--mint);margin-top:3px;font-weight:650}
-</style>
 </head>
 <body>
 <a class="skip" href="#main" data-en="Skip to content">Aller au contenu</a>
@@ -67,26 +33,20 @@
     <section class="atlas" aria-labelledby="map-title">
       <div class="atlas-header">
         <h2 id="map-title" data-en="Project map">Carte des projets</h2>
-        <button class="map-start" type="button" data-en="Explore with the keyboard" hidden>Explorer au clavier</button>
+        <a class="button map-start" href="explorer.html" data-en="Explore with the keyboard">Explorer au clavier</a>
       </div>
-      <div class="map" id="project-map" role="group" aria-labelledby="map-title" aria-describedby="map-guide">
+      <div class="map" id="project-map" role="group" aria-labelledby="map-title">
         <img src="image/atlas.webp" alt="" width="1536" height="1024" fetchpriority="high">
         <div class="route" aria-hidden="true"><i></i><i></i><i></i></div>
         <a class="pin pin-one" href="#librairie" data-project-pin="librairie"><span class="pin-number" aria-hidden="true">01</span><span class="pin-label" data-en="Online bookstore">Librairie en ligne</span></a>
         <a class="pin pin-two" href="#calculatrice" data-project-pin="calculatrice"><span class="pin-number" aria-hidden="true">02</span><span class="pin-label" data-en="Web calculator">Calculatrice web</span></a>
         <a class="pin pin-three" href="#aura" data-project-pin="aura"><span class="pin-number" aria-hidden="true">03</span><span class="pin-label">Aura Perfumes</span></a>
         <a class="pin pin-four" href="#overengineered" data-project-pin="overengineered"><span class="pin-number" aria-hidden="true">04</span><span class="pin-label">OverEngineered</span></a>
-        <span class="map-avatar" aria-hidden="true" hidden><canvas width="12" height="14"></canvas></span>
       </div>
       <div class="atlas-footer">
         <span><i aria-hidden="true"></i> Paris <span aria-hidden="true">·</span> <span data-en="France">France</span></span>
         <span class="atlas-path" aria-hidden="true"></span>
         <span><span data-en="Seoul">Séoul</span> <span aria-hidden="true">·</span> <span data-en="South Korea">Corée du Sud</span> <i aria-hidden="true"></i></span>
-      </div>
-      <div class="map-guide" id="map-guide" hidden>
-        <kbd aria-hidden="true">↑ ↓ ← →</kbd>
-        <span data-en="Use the arrow keys or WASD to move. Press Enter near a marker.">Déplace-toi avec les flèches ou ZQSD. Appuie sur Entrée près d’un repère.</span>
-        <span class="map-status" role="status"></span>
       </div>
     </section>
   </section>
@@ -154,153 +114,11 @@
 </main>
 <footer class="footer wrap"><span>© Maëlys Badger</span><a href="#" data-en="Back to top">Retour en haut</a></footer>
 <script>
-{
-  const map = document.querySelector('#project-map');
-  const start = document.querySelector('.map-start');
-  const guide = document.querySelector('#map-guide');
-  const status = document.querySelector('.map-status');
-  const avatar = map.querySelector('.map-avatar');
-  const canvas = avatar.querySelector('canvas');
-  const pins = [...map.querySelectorAll('[data-project-pin]')];
-  const frame = [
-    '....HHHH....',
-    '...HHHHHH...',
-    '...SSSSSEA..',
-    '....SESSSA..',
-    '....SSSSS...',
-    '...JJQQJ....',
-    '..BJJQQJJ...',
-    '..BJJJJJJS..',
-    '..BBJJJJ....',
-    '....TTTT....',
-    '....T..T....',
-    '....T..T....',
-    '...WW..WW...',
-    '............',
-  ];
-  const colors = {H:'#3b2140',S:'#ffd0a0',E:'#3b2140',A:'#b96c56',J:'#60bea9',Q:'#ffe184',B:'#d58b53',T:'#4b3a72',W:'#fff2db'};
-  const context = canvas.getContext('2d');
-  frame.forEach((row, y) => [...row].forEach((pixel, x) => {
-    if (pixel === '.') return;
-    context.fillStyle = colors[pixel];
-    context.fillRect(x, y, 1, 1);
-  }));
-
-  const bindings = new Map([
-    ['ArrowLeft',[-1,0]],['q',[-1,0]],['a',[-1,0]],
-    ['ArrowRight',[1,0]],['d',[1,0]],
-    ['ArrowUp',[0,-1]],['z',[0,-1]],['w',[0,-1]],
-    ['ArrowDown',[0,1]],['s',[0,1]],
-  ]);
-  const held = new Map();
-  const position = {x:0.09,y:0.85};
-  let near = null;
-  let previous = 0;
-  let animationId = 0;
-
-  function updateStatus() {
-    if (!near) {
-      status.textContent = '';
-      return;
-    }
-    const name = near.querySelector('.pin-label').textContent;
-    status.textContent = document.documentElement.lang === 'en'
-      ? `Next stop: ${name} · Press Enter to open`
-      : `Étape : ${name} · Appuie sur Entrée pour ouvrir`;
-  }
-
-  function render() {
-    const bounds = map.getBoundingClientRect();
-    const x = position.x * map.clientWidth;
-    const y = position.y * map.clientHeight;
-    avatar.style.setProperty('--player-x', `${position.x * 100}%`);
-    avatar.style.setProperty('--player-y', `${position.y * 100}%`);
-    let closest = null;
-    let distance = 34;
-    for (const pin of pins) {
-      const marker = pin.getBoundingClientRect();
-      const dx = marker.left + marker.width / 2 - bounds.left - map.clientLeft - x;
-      const dy = marker.top + marker.height / 2 - bounds.top - map.clientTop - y;
-      const candidate = Math.hypot(dx, dy);
-      if (candidate >= distance) continue;
-      distance = candidate;
-      closest = pin;
-    }
-    if (closest === near) return;
-    near?.classList.remove('is-near');
-    near = closest;
-    near?.classList.add('is-near');
-    updateStatus();
-  }
-
-  function move(dx, dy, pixels) {
-    const length = Math.hypot(dx, dy);
-    if (!length) return;
-    const width = map.clientWidth;
-    const height = map.clientHeight;
-    position.x = Math.max(16 / width, Math.min(1 - 16 / width, position.x + dx * pixels / (length * width)));
-    position.y = Math.max(30 / height, Math.min(1 - 8 / height, position.y + dy * pixels / (length * height)));
-    if (dx) avatar.style.setProperty('--facing', dx > 0 ? '1' : '-1');
-    render();
-  }
-
-  function tick(time) {
-    let dx = 0;
-    let dy = 0;
-    for (const [x,y] of held.values()) {
-      dx += x;
-      dy += y;
-    }
-    move(Math.sign(dx), Math.sign(dy), Math.min(time - previous, 36) * 0.17);
-    previous = time;
-    animationId = requestAnimationFrame(tick);
-  }
-
-  function stop() {
-    held.clear();
-    cancelAnimationFrame(animationId);
-    animationId = 0;
-  }
-
-  avatar.hidden = false;
-  start.hidden = false;
-  guide.hidden = false;
-  map.tabIndex = 0;
-  start.addEventListener('click', () => map.focus());
-  map.addEventListener('focus', render);
-  map.addEventListener('blur', stop);
-  map.addEventListener('keydown', (event) => {
-    if (event.target !== map || event.ctrlKey || event.altKey || event.metaKey) return;
-    if (event.key === 'Escape') {
-      start.focus();
-      return;
-    }
-    if (event.key === 'Enter' && near) {
-      event.preventDefault();
-      if (!event.repeat) near.click();
-      return;
-    }
-    const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
-    const direction = bindings.get(key);
-    if (!direction) return;
-    event.preventDefault();
-    if (held.has(key)) return;
-    held.set(key, direction);
-    move(...direction, 7);
-    if (!animationId) {
-      previous = performance.now();
-      animationId = requestAnimationFrame(tick);
-    }
-  });
-  map.addEventListener('keyup', (event) => {
-    const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
-    held.delete(key);
-    if (!held.size) stop();
-  });
-  window.addEventListener('blur', stop);
-  new ResizeObserver(render).observe(map);
-  new MutationObserver(updateStatus).observe(document.documentElement, {attributes:true, attributeFilter:['lang']});
-}
+  new MutationObserver(() => {
+    document.querySelector('.map-start').href = document.documentElement.lang === 'en'
+      ? 'explorer.html?lang=en'
+      : 'explorer.html';
+  }).observe(document.documentElement, {attributes:true, attributeFilter:['lang']});
 </script>
 </body>
 </html>

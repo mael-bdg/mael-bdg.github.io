@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carte des projets — Maëlys Badger</title>
+<meta name="description" content="Explore les projets de Maëlys Badger sur une carte jouable en pixel art.">
+<link rel="stylesheet" href="style.css">
+<script src="js/projets.js" defer></script>
+<style>
+/* Avatar styles from the portfolio map */
+.map:focus-visible {outline:2px solid var(--mint);outline-offset:3px}
+.map-avatar {
+  position:absolute;z-index:3;left:var(--player-x,9%);top:var(--player-y,85%);
+  width:30px;height:35px;padding-bottom:2px;transform:translate(-50%,-85%);
+  display:grid;place-items:center;pointer-events:none;
+  filter:drop-shadow(0 2px 1px #160e1a);
+}
+.map-avatar[hidden],.map-start[hidden],.map-guide[hidden] {display:none}
+.map-avatar::before {
+  content:"";position:absolute;bottom:2px;width:28px;height:9px;
+  border-radius:50%;background:#251931;border:1px solid #ffc77d;
+}
+.map-avatar canvas {
+  position:relative;width:24px;height:28px;image-rendering:pixelated;
+  margin-bottom:6px;transform:scaleX(var(--facing,1));
+}
+.map .pin.is-near {
+  color:#252038;background:var(--mint);border-color:#effae6;
+  box-shadow:0 0 0 4px #201b34ae,0 0 14px #91e4cc;
+}
+.map .pin.is-near .pin-label {color:var(--mint)}
+.map-guide {
+  border-top:1px solid var(--line);margin-top:6px;padding:8px 10px 4px;
+  color:var(--muted);font-size:.75rem;line-height:1.45;
+}
+.map-guide kbd {font:700 .75rem var(--mono);color:var(--gold)}
+.map-status:not(:empty) {display:block;color:var(--mint);margin-top:3px;font-weight:650}
+.explorer {
+  height:100svh;min-height:475px;display:grid;grid-template-rows:auto minmax(320px,1fr) auto;
+  gap:10px;padding:10px 14px;min-width:0;
+}
+.explorer-bar,.explorer-footer {
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.explorer-bar h1 {
+  margin:0;font:700 clamp(.9rem,2.7vw,1.45rem)/1.2 var(--mono);
+  letter-spacing:0;color:var(--gold);text-align:center;
+}
+.back-link,.map-start {
+  color:var(--gold);background:#312638;border:1px solid #8f6859;
+  border-radius:4px;padding:7px 10px;font:700 .75rem var(--mono);cursor:pointer;
+}
+.back-link:hover,.map-start:hover {background:#4a3544}
+.explorer .map {
+  width:100%;min-height:0;aspect-ratio:auto;overflow:hidden;border-radius:8px;
+}
+.explorer .map > img {object-position:center;filter:brightness(.87) saturate(1.1)}
+.explorer .pin {z-index:2}
+.explorer .pin:focus-visible {z-index:5}
+.explorer .pin.is-near {z-index:4}
+.explorer .map-avatar {z-index:6}
+.explorer .map-guide {border:0;margin:0;padding:0}
+.explorer .map-status:not(:empty) {display:block;margin:0}
+.explorer-actions {display:flex;align-items:center;gap:8px}
+.explorer-details {display:grid;gap:4px}
+.discovery-total {
+  color:var(--gold);font:700 .76rem var(--mono);white-space:nowrap;
+}
+.secret {
+  position:absolute;z-index:1;left:var(--x);top:var(--y);width:32px;height:32px;
+  transform:translate(-50%,-50%);display:grid;place-items:center;
+  background:transparent;border:0;padding:0;cursor:pointer;
+}
+.secret::before {
+  content:"";width:13px;height:13px;background:#ffe299;
+  clip-path:polygon(50% 0,61% 37%,100% 50%,61% 63%,50% 100%,39% 63%,0 50%,39% 37%);
+}
+.secret:hover,.secret:focus-visible {filter:drop-shadow(0 0 5px #ffcc68)}
+.secret[hidden] {display:none}
+@media(max-width:620px) {
+  .explorer {padding:8px;gap:8px}
+  .explorer-bar,.explorer-footer {flex-wrap:wrap}
+  .explorer-footer {gap:6px 10px}
+  .explorer .pin {width:32px;height:34px}
+  .explorer .pin-label {font-size:.64rem}
+  .explorer .route {display:none}
+}
+@media(prefers-reduced-motion:reduce) {
+  .secret,.map-avatar {animation:none}
+}
+</style>
+</head>
+<body>
+<main class="explorer">
+  <header class="explorer-bar">
+    <a class="back-link" href="index.html" data-en="Back to the portfolio">Retour au portfolio</a>
+    <h1 id="map-title" data-en="Project map">Carte des projets</h1>
+    <div class="explorer-actions">
+      <button class="map-start" type="button" data-en="Focus map" hidden>Activer la carte</button>
+      <button class="language" type="button" aria-label="Switch to English">EN</button>
+    </div>
+  </header>
+      <div class="map" id="project-map" role="group" aria-labelledby="map-title" aria-describedby="map-guide">
+        <img src="image/atlas.webp" alt="" width="1536" height="1024" fetchpriority="high">
+        <div class="route" aria-hidden="true"><i></i><i></i><i></i></div>
+        <a class="pin pin-one" href="index.html#librairie" data-project-pin="librairie"><span class="pin-number" aria-hidden="true">01</span><span class="pin-label" data-en="Online bookstore">Librairie en ligne</span></a>
+        <a class="pin pin-two" href="index.html#calculatrice" data-project-pin="calculatrice"><span class="pin-number" aria-hidden="true">02</span><span class="pin-label" data-en="Web calculator">Calculatrice web</span></a>
+        <a class="pin pin-three" href="index.html#aura" data-project-pin="aura"><span class="pin-number" aria-hidden="true">03</span><span class="pin-label">Aura Perfumes</span></a>
+        <a class="pin pin-four" href="index.html#overengineered" data-project-pin="overengineered"><span class="pin-number" aria-hidden="true">04</span><span class="pin-label">OverEngineered</span></a>
+        <button class="secret" type="button" style="--x:27%;--y:29%" aria-label="Découvrir un secret" data-fr="Tu as trouvé la carte postale de Séoul, souvenir de mon semestre à SeoulTech." data-message-en="You found the Seoul postcard, a souvenir from my semester at SeoulTech." hidden></button>
+        <button class="secret" type="button" style="--x:55%;--y:85%" aria-label="Découvrir un secret" data-fr="Tu as trouvé le billet de train griffonné. Au dos, quelqu’un a écrit « git commit -m voyage »." data-message-en="You found the scribbled train ticket. On the back, someone wrote “git commit -m voyage”." hidden></button>
+        <button class="secret" type="button" style="--x:74%;--y:20%" aria-label="Découvrir un secret" data-fr="Tu as trouvé la sauvegarde secrète. Le prochain niveau s’appelle « Avril 2027 »." data-message-en="You found the secret save point. The next level is called “April 2027”." hidden></button>
+        <span class="map-avatar" aria-hidden="true" hidden><canvas width="12" height="14"></canvas></span>
+      </div>
+  <footer class="explorer-footer">
+    <div class="explorer-details">
+      <p class="map-guide" id="map-guide" data-en="Arrow keys or WASD to move. Enter opens a nearby project. You can also tap the map.">Flèches ou ZQSD pour avancer. Entrée ouvre un projet à proximité. Tu peux aussi toucher la carte.</p>
+      <p class="map-status" role="status"></p>
+    </div>
+    <p class="discovery-total"><span data-en="Secrets">Secrets</span> <span class="discovery-count">0 / 3</span></p>
+  </footer>
+</main>
+<script>
+{
+  const map = document.querySelector('#project-map');
+  const start = document.querySelector('.map-start');
+  const status = document.querySelector('.map-status');
+  const avatar = map.querySelector('.map-avatar');
+  const canvas = avatar.querySelector('canvas');
+  const pins = [...map.querySelectorAll('[data-project-pin]')];
+  const secrets = [...map.querySelectorAll('.secret')];
+  const count = document.querySelector('.discovery-count');
+  const language = document.querySelector('.language');
+  const labels = [...document.querySelectorAll('[data-en]')];
+  const french = labels.map(label => label.textContent);
+  let lastSecret = null;
+  let collected = 0;
+
+  function setLanguage(lang) {
+    const english = lang === 'en';
+    document.documentElement.lang = lang;
+    document.title = english ? 'Project map — Maëlys Badger' : 'Carte des projets — Maëlys Badger';
+    language.textContent = english ? 'FR' : 'EN';
+    language.setAttribute('aria-label', english ? 'Afficher en français' : 'Switch to English');
+    labels.forEach((label, i) => label.textContent = english ? label.dataset.en : french[i]);
+    secrets.forEach(secret => secret.setAttribute('aria-label', english ? 'Discover a secret' : 'Découvrir un secret'));
+    updateStatus();
+  }
+
+  const frame = [
+    '....HHHH....',
+    '...HHHHHH...',
+    '...SSSSSEA..',
+    '....SESSSA..',
+    '....SSSSS...',
+    '...JJQQJ....',
+    '..BJJQQJJ...',
+    '..BJJJJJJS..',
+    '..BBJJJJ....',
+    '....TTTT....',
+    '....T..T....',
+    '....T..T....',
+    '...WW..WW...',
+    '............',
+  ];
+  const colors = {H:'#3b2140',S:'#ffd0a0',E:'#3b2140',A:'#b96c56',J:'#60bea9',Q:'#ffe184',B:'#d58b53',T:'#4b3a72',W:'#fff2db'};
+  const context = canvas.getContext('2d');
+  frame.forEach((row, y) => [...row].forEach((pixel, x) => {
+    if (pixel === '.') return;
+    context.fillStyle = colors[pixel];
+    context.fillRect(x, y, 1, 1);
+  }));
+
+  const bindings = new Map([
+    ['ArrowLeft',[-1,0]],['q',[-1,0]],['a',[-1,0]],
+    ['ArrowRight',[1,0]],['d',[1,0]],
+    ['ArrowUp',[0,-1]],['z',[0,-1]],['w',[0,-1]],
+    ['ArrowDown',[0,1]],['s',[0,1]],
+  ]);
+  const held = new Map();
+  const position = {x:0.09,y:0.85};
+  let near = null;
+  let previous = 0;
+  let animationId = 0;
+
+  function updateStatus() {
+    if (!near) {
+      const english = document.documentElement.lang === 'en';
+      status.textContent = lastSecret
+        ? (english ? lastSecret.dataset.messageEn : lastSecret.dataset.fr)
+        : '';
+      return;
+    }
+    const name = near.querySelector('.pin-label').textContent;
+    status.textContent = document.documentElement.lang === 'en'
+      ? `Next stop: ${name} · Press Enter to open`
+      : `Étape : ${name} · Appuie sur Entrée pour ouvrir`;
+  }
+
+  function render() {
+    const bounds = map.getBoundingClientRect();
+    const x = position.x * map.clientWidth;
+    const y = position.y * map.clientHeight;
+    avatar.style.setProperty('--player-x', `${position.x * 100}%`);
+    avatar.style.setProperty('--player-y', `${position.y * 100}%`);
+    const distanceTo = (target) => {
+      const marker = target.getBoundingClientRect();
+      const dx = marker.left + marker.width / 2 - bounds.left - map.clientLeft - x;
+      const dy = marker.top + marker.height / 2 - bounds.top - map.clientTop - y;
+      return Math.hypot(dx, dy);
+    };
+    for (const secret of secrets) {
+      if (!secret.hidden && distanceTo(secret) < 24) reveal(secret);
+    }
+    let closest = null;
+    let distance = 37;
+    for (const pin of pins) {
+      const candidate = distanceTo(pin);
+      if (candidate >= distance) continue;
+      distance = candidate;
+      closest = pin;
+    }
+    if (closest === near) return;
+    near?.classList.remove('is-near');
+    near = closest;
+    near?.classList.add('is-near');
+    updateStatus();
+  }
+
+  function reveal(secret) {
+    if (secret.hidden) return;
+    secret.hidden = true;
+    lastSecret = secret;
+    collected += 1;
+    count.textContent = `${collected} / ${secrets.length}`;
+    updateStatus();
+  }
+
+  function positionAt(x, y) {
+    const width = map.clientWidth;
+    const height = map.clientHeight;
+    position.x = Math.max(16 / width, Math.min(1 - 16 / width, x));
+    position.y = Math.max(30 / height, Math.min(1 - 8 / height, y));
+    render();
+  }
+
+  function move(dx, dy, pixels) {
+    const length = Math.hypot(dx, dy);
+    if (!length) return;
+    const width = map.clientWidth;
+    const height = map.clientHeight;
+    if (dx) avatar.style.setProperty('--facing', dx > 0 ? '1' : '-1');
+    positionAt(position.x + dx * pixels / (length * width), position.y + dy * pixels / (length * height));
+  }
+
+  function tick(time) {
+    let dx = 0;
+    let dy = 0;
+    for (const [x,y] of held.values()) {
+      dx += x;
+      dy += y;
+    }
+    move(Math.sign(dx), Math.sign(dy), Math.min(time - previous, 36) * Math.max(.15, map.clientWidth * .00023));
+    previous = time;
+    animationId = requestAnimationFrame(tick);
+  }
+
+  function stop() {
+    held.clear();
+    cancelAnimationFrame(animationId);
+    animationId = 0;
+  }
+
+  avatar.hidden = false;
+  start.hidden = false;
+  map.tabIndex = 0;
+  start.addEventListener('click', () => map.focus());
+  map.addEventListener('focus', render);
+  for (const secret of secrets) {
+    secret.hidden = false;
+    secret.addEventListener('click', () => {
+      reveal(secret);
+      map.focus({preventScroll:true});
+    });
+  }
+  map.addEventListener('click', (event) => {
+    if (event.target.closest('a,button')) return;
+    const box = map.getBoundingClientRect();
+    positionAt((event.clientX - box.left - map.clientLeft) / map.clientWidth,
+      (event.clientY - box.top - map.clientTop) / map.clientHeight);
+    map.focus({preventScroll:true});
+  });
+  map.addEventListener('blur', stop);
+  map.addEventListener('keydown', (event) => {
+    if (event.target !== map || event.ctrlKey || event.altKey || event.metaKey) return;
+    if (event.key === 'Escape') {
+      start.focus();
+      return;
+    }
+    if (event.key === 'Enter' && near) {
+      event.preventDefault();
+      if (!event.repeat) near.click();
+      return;
+    }
+    const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+    const direction = bindings.get(key);
+    if (!direction) return;
+    event.preventDefault();
+    if (held.has(key)) return;
+    held.set(key, direction);
+    move(...direction, 7);
+    if (!animationId) {
+      previous = performance.now();
+      animationId = requestAnimationFrame(tick);
+    }
+  });
+  map.addEventListener('keyup', (event) => {
+    const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+    held.delete(key);
+    if (!held.size) stop();
+  });
+  window.addEventListener('blur', stop);
+  new ResizeObserver(render).observe(map);
+  const url = new URL(location.href);
+  setLanguage(url.searchParams.get('lang') === 'en' ? 'en' : 'fr');
+  language.addEventListener('click', () => setLanguage(document.documentElement.lang === 'en' ? 'fr' : 'en'));
+  map.focus({preventScroll:true});
+  document.addEventListener('DOMContentLoaded', () => {
+    for (const pin of pins) {
+      const link = projectRepositories[pin.dataset.projectPin]?.trim();
+      if (link && /^https:\/\/github\.com\/[\w-]+\/[\w.-]+\/?$/i.test(link)) pin.href = link;
+    }
+  });
+}
+</script>
+</body>
+</html>
