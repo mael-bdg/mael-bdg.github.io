@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maëlys Badger — Développeuse web</title>
+<meta name="description" content="Portfolio de Maëlys Badger, élève ingénieure à l’ESIEA. Recherche de stage en développement web à partir d’avril 2027.">
+<link rel="stylesheet" href="style.css">
+<script src="projets.js" defer></script>
+<script src="liens-projets.js" defer></script>
+<script src="language.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main" data-en="Skip to content">Aller au contenu</a>
+<header class="top wrap">
+  <a href="#" class="brand" aria-label="Maëlys Badger"><span class="mark" aria-hidden="true"><i></i></span> <span>Maëlys Badger</span></a>
+  <nav aria-label="Navigation">
+    <a href="#projets" data-en="Projects">Projets</a>
+    <a href="#parcours" data-en="About">Parcours</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <button class="language" type="button" aria-label="Switch to English">EN</button>
+</header>
+<main id="main">
+  <section class="hero wrap" aria-labelledby="hero-title">
+    <div class="intro">
+      <div class="availability"><span aria-hidden="true"></span><span data-en="Available from April 2027">Disponible dès avril 2027</span></div>
+      <h1 id="hero-title">Maëlys<br>Badger<span>.</span></h1>
+      <p class="role" data-en="Web developer">Développeuse web</p>
+      <p class="lede" data-en="I’m an engineering student at ESIEA, looking for a four-month web development internship in France or elsewhere in Europe.">Élève ingénieure à l’ESIEA, je recherche un stage de quatre mois en développement web en France ou ailleurs en Europe.</p>
+      <div class="actions"><a href="#projets" class="button"><span data-en="Explore my projects">Explorer mes projets</span><span class="arrow arrow-down" aria-hidden="true"></span></a><a href="#contact" class="plain"><span data-en="Get in touch">Me contacter</span> <span class="arrow arrow-up" aria-hidden="true"></span></a></div>
+    </div>
+    <section class="atlas" aria-labelledby="map-title">
+      <div class="atlas-header">
+        <h2 id="map-title" data-en="Project map">Carte des projets</h2>
+        <span data-en="Choose a stop">Choisis une étape</span>
+      </div>
+      <div class="map">
+        <img src="atlas.webp" alt="" width="1536" height="1024" fetchpriority="high">
+        <div class="route" aria-hidden="true"><i></i><i></i><i></i></div>
+        <a class="pin pin-one" href="#librairie" data-project-pin="librairie"><span class="pin-number" aria-hidden="true">01</span><span class="pin-label" data-en="Online bookstore">Librairie en ligne</span></a>
+        <a class="pin pin-two" href="#calculatrice" data-project-pin="calculatrice"><span class="pin-number" aria-hidden="true">02</span><span class="pin-label" data-en="Web calculator">Calculatrice web</span></a>
+        <a class="pin pin-three" href="#aura" data-project-pin="aura"><span class="pin-number" aria-hidden="true">03</span><span class="pin-label">Aura Perfumes</span></a>
+        <a class="pin pin-four" href="#overengineered" data-project-pin="overengineered"><span class="pin-number" aria-hidden="true">04</span><span class="pin-label">OverEngineered</span></a>
+      </div>
+      <div class="atlas-footer">
+        <span><i aria-hidden="true"></i> Paris <span aria-hidden="true">·</span> <span data-en="France">France</span></span>
+        <span class="atlas-path" aria-hidden="true"></span>
+        <span><span data-en="Seoul">Séoul</span> <span aria-hidden="true">·</span> <span data-en="South Korea">Corée du Sud</span> <i aria-hidden="true"></i></span>
+      </div>
+    </section>
+  </section>
+  <section id="projets" class="projects">
+    <div class="wrap">
+      <div class="section-head"><h2 data-en="Project journal">Carnet de projets</h2><p data-en="Web development, software design and IoT.">Développement web, conception logicielle et IoT.</p></div>
+      <div class="cards">
+        <article class="card" id="librairie" tabindex="-1">
+          <div class="project-art art-books" aria-hidden="true">
+            <span class="stop-number">01</span>
+            <div class="demo shop"><div class="demo-top"><i></i><i></i><i></i></div><div class="shop-area"><strong>Bookshop</strong><div class="search-line"></div><div class="books"><i></i><i></i><i></i><i></i></div></div></div>
+          </div>
+          <div class="card-text"><p class="context" data-en="Web development · SeoulTech">Développement web · SeoulTech</p><h3 data-en="Online bookstore">Librairie en ligne</h3><p data-en="A responsive web app with an interactive catalogue. I worked on the title search and shopping cart.">Une application web responsive avec un catalogue interactif. J’ai travaillé sur la recherche par titre et le panier.</p><ul class="tags"><li>JavaScript</li><li>HTML/CSS</li><li>SQL</li></ul></div>
+        </article>
+        <article class="card" id="calculatrice" tabindex="-1">
+          <div class="project-art art-calc" aria-hidden="true">
+            <span class="stop-number">02</span>
+            <div class="demo calc"><div class="demo-top"><i></i><i></i><i></i></div><div class="calc-body"><div class="display">12 × 5 <b>60</b></div><div class="keys"><i>7</i><i>8</i><i>9</i><i>÷</i><i>4</i><i>5</i><i>6</i><i>×</i><i>1</i><i>2</i><i>3</i><i>=</i></div></div></div>
+          </div>
+          <div class="card-text"><p class="context" data-en="Full-stack development · ESIEA">Développement full stack · ESIEA</p><h3 data-en="Web calculator">Calculatrice web</h3><p data-en="I integrated the interface, built navigation between the keypad and input views, and worked on saving values locally and in the cloud.">J’ai intégré l’interface, géré la navigation entre le clavier et la saisie, et travaillé sur la sauvegarde des valeurs en local et dans le cloud.</p><ul class="tags"><li>JavaScript</li><li>IndexedDB</li><li>Supabase</li><li>Playwright</li></ul></div>
+        </article>
+        <article class="card" id="aura" tabindex="-1">
+          <div class="project-art art-aura" aria-hidden="true">
+            <span class="stop-number">03</span>
+            <div class="demo aura"><div class="demo-top"><i></i><i></i><i></i></div><div class="aura-area"><div class="bottle"><i></i><b>AURA</b></div><div><strong>Aura<br>Perfumes</strong><span></span><span></span></div></div></div>
+          </div>
+          <div class="card-text"><p class="context" data-en="Software design · ESIEA">Conception logicielle · ESIEA</p><h3>Aura Perfumes</h3><p data-en="A Java application for a perfume shop. I implemented the fragrance consultation booking and in-store order use cases.">Une application Java pour une parfumerie. J’ai développé les cas d’utilisation liés à la réservation de consultations et aux commandes en boutique.</p><ul class="tags"><li>Java</li><li>Maven</li><li>SQLite</li></ul></div>
+        </article>
+        <article class="card" id="overengineered" tabindex="-1">
+          <div class="project-art art-iot" aria-hidden="true">
+            <span class="stop-number">04</span>
+            <div class="demo sensor"><div class="demo-top"><i></i><i></i><i></i></div><div class="sensor-area"><strong>Home Assistant</strong><div class="gauges"><i>21°</i><i>64%</i><i>350 lx</i></div><div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>
+          </div>
+          <div class="card-text"><p class="context" data-en="IoT · ESIEA capstone">IoT · CAP’Projet ESIEA</p><h3>OverEngineered</h3><p data-en="A five-person team project for urban farms. Our Home Assistant prototype displays simulated temperature, humidity and light readings sent over MQTT.">Un projet à cinq pour les fermes urbaines. Notre prototype Home Assistant affiche des mesures simulées de température, d’humidité et de luminosité reçues via MQTT.</p><ul class="tags"><li>Home Assistant</li><li>MQTT</li><li>ESP32</li></ul></div>
+        </article>
+      </div>
+    </div>
+  </section>
+  <section id="parcours" class="about wrap">
+    <div>
+      <h2 data-en="My journey">Mon itinéraire</h2>
+      <ol class="journey">
+        <li><span class="place">Paris</span><p data-en="Engineering studies at ESIEA, specialising in Software Engineering.">Cycle ingénieur à l’ESIEA, spécialisation Software Engineering.</p></li>
+        <li><span class="place" data-en="Seoul">Séoul</span><p data-en="Exchange semester at SeoulTech, where I developed an online bookstore.">Semestre d’échange à SeoulTech, où j’ai développé une librairie en ligne.</p></li>
+      </ol>
+      <p class="interests" data-en="Outside my studies, I enjoy travelling, discovering new cultures and playing video games.">En dehors de mes études, j’aime voyager, découvrir de nouvelles cultures et jouer aux jeux vidéo.</p>
+    </div>
+    <div>
+      <h3 data-en="Technical skills">Compétences techniques</h3>
+      <dl class="skills">
+        <div><dt>Web</dt><dd>JavaScript, HTML, CSS</dd></div>
+        <div><dt data-en="Programming">Programmation</dt><dd>Python, Java, SQL</dd></div>
+        <div><dt data-en="Databases">Bases de données</dt><dd>PostgreSQL, SQLite, IndexedDB</dd></div>
+        <div><dt data-en="Tools and testing">Outils et tests</dt><dd>Git, GitHub, GitLab, Playwright</dd></div>
+        <div><dt data-en="Languages">Langues</dt><dd data-en="Native French · English C1 (TOEIC 935/990)">Français natif · Anglais C1 (TOEIC 935/990)</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section id="contact" class="contact wrap">
+    <div class="contact-inner">
+      <div><h2 data-en="Let’s talk">Échangeons</h2><p data-en="Based near Paris and open to internship opportunities in France and across Europe.">Basée en Île-de-France et ouverte aux opportunités de stage en France et ailleurs en Europe.</p></div>
+      <div class="contact-actions"><a class="button" href="https://www.linkedin.com/in/maelysbadger"><span data-en="Contact me on LinkedIn">Me contacter sur LinkedIn</span> <span class="arrow arrow-up" aria-hidden="true"></span></a><div class="socials"><a href="https://github.com/mael-bdg">GitHub</a></div></div>
+    </div>
+  </section>
+</main>
+<footer class="footer wrap"><span>© Maëlys Badger</span><a href="#" data-en="Back to top">Retour en haut</a></footer>
+</body>
+</html>
