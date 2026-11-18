@@ -3,6 +3,6 @@
 const projectRepositories = {
   librairie: 'https://github.com/mael-bdg/Web_programming-project',
   calculatrice: '',
-  aura: '',
+  aura: 'https://github.com/mael-bdg/aura-perfumes',
   overengineered: '',
 };
