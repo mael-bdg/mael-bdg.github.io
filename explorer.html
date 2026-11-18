@@ -89,6 +89,45 @@
 @media(prefers-reduced-motion:reduce) {
   .secret,.map-avatar {animation:none}
 }
+.landmark {
+  position:absolute;z-index:3;left:var(--hot-x);top:var(--hot-y);
+  transform:translate(-50%,-50%);display:flex;align-items:center;gap:6px;
+  border:1px solid #c89b72;border-radius:5px;padding:6px 9px;
+  color:#ffdfa7;background:#261c32ed;cursor:pointer;
+  font:700 .74rem var(--mono);
+}
+.landmark:hover,.landmark.is-near,.landmark:focus-visible {
+  color:#211c32;background:var(--mint);border-color:#e1ffed
+}
+.landmark-icon {width:15px;height:11px;display:inline-block;border:2px solid currentColor;border-radius:2px;position:relative}
+.landmark-icon::after {content:"";position:absolute;display:block}
+.train-icon::after {inset:1px 2px 3px;border-inline:2px solid currentColor}
+.case-icon::after {top:-5px;left:3px;width:5px;height:4px;border:1px solid currentColor;border-bottom:0}
+.discovery-panel {
+  position:absolute;z-index:7;left:clamp(8px,2vw,24px);top:clamp(8px,2vw,24px);
+  width:min(365px,calc(100% - 16px));max-height:calc(100% - 16px);overflow:auto;
+  padding:13px;border-radius:9px;border:1px solid #b08672;background:#211a31f5;
+  box-shadow:0 12px 30px #100e1caa;color:var(--ink);
+}
+.discovery-panel[hidden] {display:none}
+.discovery-head {display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.discovery-head h2 {margin:0;color:var(--gold);font:700 .92rem var(--mono);letter-spacing:0}
+.discovery-close {border:1px solid var(--line);border-radius:4px;background:#352943;color:#fff1da;font:700 .96rem var(--mono);width:30px;height:30px;cursor:pointer}
+.discovery-items {list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.discovery-item {display:grid;grid-template-columns:72px 1fr;align-items:center;gap:10px;min-height:65px}
+.discovery-item p {font-size:.84rem;line-height:1.4}
+.collectible-art {
+  display:block;aspect-ratio:1;border-radius:5px;border:1px solid #86647e;
+  background:#30233b url('souvenirs.webp') no-repeat var(--art-x) center / 300% 100%;
+}
+.discovery-empty {font-size:.84rem;line-height:1.5;color:var(--muted)}
+.map-avatar.is-riding canvas {visibility:hidden}
+.map-avatar.is-riding::before {width:31px;height:14px;border:2px solid #ffe6a3;border-radius:3px;background:#b35d5f;box-shadow:0 3px 0 1px #34243d}
+.map-avatar.is-riding::after {content:"";position:absolute;width:5px;height:5px;bottom:7px;left:6px;background:#ffe8ad;box-shadow:7px 0 #ffe8ad,14px 0 #ffe8ad}
+@media(max-width:620px) {
+  .landmark {padding:5px 7px;font-size:.65rem}
+  .discovery-item {grid-template-columns:57px 1fr}
+}
 </style>
 </head>
 <body>
@@ -108,9 +147,22 @@
         <a class="pin pin-two" href="index.html#calculatrice" data-project-pin="calculatrice"><span class="pin-number" aria-hidden="true">02</span><span class="pin-label" data-en="Web calculator">Calculatrice web</span></a>
         <a class="pin pin-three" href="index.html#aura" data-project-pin="aura"><span class="pin-number" aria-hidden="true">03</span><span class="pin-label">Aura Perfumes</span></a>
         <a class="pin pin-four" href="index.html#overengineered" data-project-pin="overengineered"><span class="pin-number" aria-hidden="true">04</span><span class="pin-label">OverEngineered</span></a>
-        <button class="secret" type="button" style="--x:27%;--y:29%" aria-label="Découvrir un secret" data-fr="Tu as trouvé la carte postale de Séoul, souvenir de mon semestre à SeoulTech." data-message-en="You found the Seoul postcard, a souvenir from my semester at SeoulTech." hidden></button>
-        <button class="secret" type="button" style="--x:55%;--y:85%" aria-label="Découvrir un secret" data-fr="Tu as trouvé le billet de train griffonné. Au dos, quelqu’un a écrit « git commit -m voyage »." data-message-en="You found the scribbled train ticket. On the back, someone wrote “git commit -m voyage”." hidden></button>
-        <button class="secret" type="button" style="--x:74%;--y:20%" aria-label="Découvrir un secret" data-fr="Tu as trouvé la sauvegarde secrète. Le prochain niveau s’appelle « Avril 2027 »." data-message-en="You found the secret save point. The next level is called “April 2027”." hidden></button>
+        <button class="secret" type="button" data-art="0" style="--x:27%;--y:29%" aria-label="Découvrir un secret" data-fr="Tu as trouvé la carte postale de Séoul, souvenir de mon semestre à SeoulTech." data-message-en="You found the Seoul postcard, a souvenir from my semester at SeoulTech." hidden></button>
+        <button class="secret" type="button" data-art="1" style="--x:55%;--y:85%" aria-label="Découvrir un secret" data-fr="Tu as trouvé le billet de train griffonné. Au dos, quelqu’un a écrit « git commit -m voyage »." data-message-en="You found the scribbled train ticket. On the back, someone wrote “git commit -m voyage”." hidden></button>
+        <button class="secret" type="button" data-art="2" style="--x:74%;--y:20%" aria-label="Découvrir un secret" data-fr="Tu as trouvé la sauvegarde secrète. Le prochain niveau s’appelle « Avril 2027 »." data-message-en="You found the secret save point. The next level is called “April 2027”." hidden></button>
+        <button class="landmark" type="button" data-landmark="train" data-world-x=".894" data-world-y=".588" style="--hot-x:89%;--hot-y:59%">
+          <span class="landmark-icon train-icon" aria-hidden="true"></span><span data-en="Train">Train</span>
+        </button>
+        <button class="landmark" type="button" data-landmark="case" data-world-x=".371" data-world-y=".728" style="--hot-x:37%;--hot-y:73%">
+          <span class="landmark-icon case-icon" aria-hidden="true"></span><span data-en="Suitcase">Valise</span>
+        </button>
+        <aside class="discovery-panel" aria-labelledby="discovery-title" hidden>
+          <div class="discovery-head">
+            <h2 id="discovery-title"></h2>
+            <button class="discovery-close" type="button" aria-label="Fermer">×</button>
+          </div>
+          <ul class="discovery-items"></ul>
+        </aside>
         <span class="map-avatar" aria-hidden="true" hidden><canvas width="12" height="14"></canvas></span>
       </div>
   <footer class="explorer-footer">
@@ -131,11 +183,25 @@
   const pins = [...map.querySelectorAll('[data-project-pin]')];
   const secrets = [...map.querySelectorAll('.secret')];
   const count = document.querySelector('.discovery-count');
+  const artwork = map.querySelector('img');
+  const landmarks = [...map.querySelectorAll('[data-landmark]')];
+  const panel = map.querySelector('.discovery-panel');
+  const panelTitle = panel.querySelector('h2');
+  const panelItems = panel.querySelector('.discovery-items');
+  const closePanel = panel.querySelector('.discovery-close');
+  const found = new Set();
+  const artworkTitles = [
+    ['Carte postale de Séoul', 'Seoul postcard'],
+    ['Billet de train', 'Train ticket'],
+    ['Disquette de sauvegarde', 'Save disk'],
+  ];
+  let panelMode = null;
+  let riding = false;
+  let trainMessage = null;
   const language = document.querySelector('.language');
   const labels = [...document.querySelectorAll('[data-en]')];
   const french = labels.map(label => label.textContent);
   let lastSecret = null;
-  let collected = 0;
 
   function setLanguage(lang) {
     const english = lang === 'en';
@@ -145,6 +211,8 @@
     language.setAttribute('aria-label', english ? 'Afficher en français' : 'Switch to English');
     labels.forEach((label, i) => label.textContent = english ? label.dataset.en : french[i]);
     secrets.forEach(secret => secret.setAttribute('aria-label', english ? 'Discover a secret' : 'Découvrir un secret'));
+    closePanel.setAttribute('aria-label', english ? 'Close' : 'Fermer');
+    updatePanel();
     updateStatus();
   }
 
@@ -185,17 +253,105 @@
   let animationId = 0;
 
   function updateStatus() {
-    if (!near) {
-      const english = document.documentElement.lang === 'en';
-      status.textContent = lastSecret
-        ? (english ? lastSecret.dataset.messageEn : lastSecret.dataset.fr)
-        : '';
-      return;
+    const english = document.documentElement.lang === 'en';
+    let message = '';
+    if (trainMessage) {
+      message = trainMessage[Number(english)];
+    } else if (near) {
+      if (near.dataset.landmark === 'train') message = english ? 'Train · Enter to board' : 'Train · Entrée pour monter';
+      else if (near.dataset.landmark === 'case') message = english ? 'Suitcase · Enter to open it' : 'Valise · Entrée pour l’ouvrir';
+      else {
+        const name = near.querySelector('.pin-label').textContent;
+        message = english ? `Next stop: ${name} · Press Enter to open` : `Étape : ${name} · Appuie sur Entrée pour ouvrir`;
+      }
     }
-    const name = near.querySelector('.pin-label').textContent;
-    status.textContent = document.documentElement.lang === 'en'
-      ? `Next stop: ${name} · Press Enter to open`
-      : `Étape : ${name} · Appuie sur Entrée pour ouvrir`;
+    if (status.textContent !== message) status.textContent = message;
+  }
+
+  function updatePanel() {
+    if (!panelMode) return;
+    const english = document.documentElement.lang === 'en';
+    const isCase = panelMode === 'case';
+    panelTitle.textContent = isCase ? (english ? 'Travel suitcase' : 'Valise de voyage')
+      : (english ? 'Secret discovered' : 'Secret découvert');
+    panelItems.replaceChildren();
+    const items = isCase ? found : [lastSecret];
+    if (isCase && found.size === 0) {
+      const empty = document.createElement('li');
+      empty.className = 'discovery-empty';
+      empty.textContent = english ? 'Your discoveries will appear here as you explore.'
+        : 'Tes découvertes apparaîtront ici au fil de ton exploration.';
+      panelItems.append(empty);
+    }
+    for (const secret of items) {
+      const item = document.createElement('li');
+      item.className = 'discovery-item';
+      const picture = document.createElement('span');
+      const art = Number(secret.dataset.art);
+      picture.className = 'collectible-art';
+      picture.style.setProperty('--art-x', `${art * 50}%`);
+      picture.setAttribute('role', 'img');
+      picture.setAttribute('aria-label', artworkTitles[art][Number(english)]);
+      const description = document.createElement('p');
+      description.textContent = english ? secret.dataset.messageEn : secret.dataset.fr;
+      item.append(picture, description);
+      panelItems.append(item);
+    }
+    panel.hidden = false;
+  }
+
+  function dismissPanel() {
+    panelMode = null;
+    panel.hidden = true;
+    map.focus({preventScroll:true});
+  }
+
+  function alignLandmarks() {
+    const width = map.clientWidth;
+    const height = map.clientHeight;
+    const pictureWidth = artwork.naturalWidth || 1536;
+    const pictureHeight = artwork.naturalHeight || 1024;
+    const scale = Math.max(width / pictureWidth, height / pictureHeight);
+    for (const landmark of landmarks) {
+      const x = width / 2 + (Number(landmark.dataset.worldX) - .5) * pictureWidth * scale;
+      const y = height / 2 + (Number(landmark.dataset.worldY) - .5) * pictureHeight * scale;
+      landmark.style.setProperty('--hot-x', `${Math.max(37, Math.min(width - 37, x))}px`);
+      landmark.style.setProperty('--hot-y', `${Math.max(28, Math.min(height - 28, y))}px`);
+    }
+    render();
+  }
+
+  function boardTrain() {
+    if (riding) return;
+    stop();
+    dismissPanel();
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const first = landmarks.find(landmark => landmark.dataset.landmark === 'train');
+    const x = parseFloat(first.style.getPropertyValue('--hot-x')) / map.clientWidth;
+    const y = parseFloat(first.style.getPropertyValue('--hot-y')) / map.clientHeight;
+    const destination = landmarks.find(landmark => landmark.dataset.landmark === 'case');
+    const arrivalX = (parseFloat(destination.style.getPropertyValue('--hot-x')) - 18) / map.clientWidth;
+    const arrivalY = (parseFloat(destination.style.getPropertyValue('--hot-y')) + 18) / map.clientHeight;
+    riding = true;
+    trainMessage = ['Prochain arrêt : la gare du lac !', 'Next stop: Lakeside Station!'];
+    avatar.classList.add('is-riding');
+    positionAt(x, y);
+    updateStatus();
+    const started = performance.now();
+    function ride(time) {
+      const progress = reducedMotion ? 1 : Math.min(1,(time - started) / 1650);
+      const eased = progress * progress * (3 - 2 * progress);
+      positionAt(x + (arrivalX - x) * eased, y + (arrivalY - y) * eased - .13 * Math.sin(Math.PI * eased));
+      if (progress < 1) {
+        requestAnimationFrame(ride);
+        return;
+      }
+      riding = false;
+      avatar.classList.remove('is-riding');
+      trainMessage = ['Arrivée à la gare du lac.', 'Arrived at Lakeside Station.'];
+      updateStatus();
+    }
+    requestAnimationFrame(ride);
   }
 
   function render() {
@@ -211,11 +367,11 @@
       return Math.hypot(dx, dy);
     };
     for (const secret of secrets) {
-      if (!secret.hidden && distanceTo(secret) < 24) reveal(secret);
+      if (!riding && !secret.hidden && distanceTo(secret) < 24) reveal(secret);
     }
     let closest = null;
     let distance = 37;
-    for (const pin of pins) {
+    for (const pin of [...pins, ...landmarks]) {
       const candidate = distanceTo(pin);
       if (candidate >= distance) continue;
       distance = candidate;
@@ -232,9 +388,10 @@
     if (secret.hidden) return;
     secret.hidden = true;
     lastSecret = secret;
-    collected += 1;
-    count.textContent = `${collected} / ${secrets.length}`;
-    updateStatus();
+    found.add(secret);
+    count.textContent = `${found.size} / ${secrets.length}`;
+    panelMode = 'secret';
+    updatePanel();
   }
 
   function positionAt(x, y) {
@@ -284,16 +441,36 @@
       map.focus({preventScroll:true});
     });
   }
+  closePanel.addEventListener('click', dismissPanel);
+  for (const landmark of landmarks) {
+    landmark.addEventListener('click', () => {
+      if (riding) return;
+      if (landmark.dataset.landmark === 'train') boardTrain();
+      else {
+        trainMessage = null;
+        panelMode = 'case';
+        updatePanel();
+        updateStatus();
+        closePanel.focus();
+      }
+    });
+  }
   map.addEventListener('click', (event) => {
-    if (event.target.closest('a,button')) return;
+    if (riding || event.target.closest('a,button,.discovery-panel')) return;
+    trainMessage = null;
     const box = map.getBoundingClientRect();
     positionAt((event.clientX - box.left - map.clientLeft) / map.clientWidth,
       (event.clientY - box.top - map.clientTop) / map.clientHeight);
     map.focus({preventScroll:true});
+    updateStatus();
   });
   map.addEventListener('blur', stop);
   map.addEventListener('keydown', (event) => {
-    if (event.target !== map || event.ctrlKey || event.altKey || event.metaKey) return;
+    if (event.key === 'Escape' && !panel.hidden) {
+      dismissPanel();
+      return;
+    }
+    if (riding || event.target !== map || event.ctrlKey || event.altKey || event.metaKey) return;
     if (event.key === 'Escape') {
       start.focus();
       return;
@@ -309,7 +486,9 @@
     event.preventDefault();
     if (held.has(key)) return;
     held.set(key, direction);
+    trainMessage = null;
     move(...direction, 7);
+    updateStatus();
     if (!animationId) {
       previous = performance.now();
       animationId = requestAnimationFrame(tick);
@@ -321,7 +500,9 @@
     if (!held.size) stop();
   });
   window.addEventListener('blur', stop);
-  new ResizeObserver(render).observe(map);
+  new ResizeObserver(alignLandmarks).observe(map);
+  artwork.addEventListener('load', alignLandmarks);
+  alignLandmarks();
   const url = new URL(location.href);
   setLanguage(url.searchParams.get('lang') === 'en' ? 'en' : 'fr');
   language.addEventListener('click', () => setLanguage(document.documentElement.lang === 'en' ? 'fr' : 'en'));
