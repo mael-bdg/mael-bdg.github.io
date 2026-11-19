@@ -15,10 +15,10 @@
   const towerPicture = document.createElement('img');
   const closePanel = panel.querySelector('.discovery-close');
   const found = new Set();
-  const artworkTitles = [
-    ['Carte postale de Séoul', 'Seoul postcard'],
-    ['Billet de train', 'Train ticket'],
-    ['Disquette de sauvegarde', 'Save disk'],
+  const collectibles = [
+    ['carte-postale-seoul.png', 'Carte postale de Séoul', 'Seoul postcard'],
+    ['billet-de-train.png', 'Billet de train', 'Train ticket'],
+    ['sauvegarde-secrete.png', 'Disquette de sauvegarde', 'Save disk'],
   ];
   let panelMode = null;
   let riding = false;
@@ -127,12 +127,11 @@
     for (const secret of items) {
       const item = document.createElement('li');
       item.className = 'discovery-item';
-      const picture = document.createElement('span');
-      const art = Number(secret.dataset.art);
+      const [filename, frenchTitle, englishTitle] = collectibles[Number(secret.dataset.art)];
+      const picture = document.createElement('img');
       picture.className = 'collectible-art';
-      picture.style.setProperty('--art-x', `${art * 50}%`);
-      picture.setAttribute('role', 'img');
-      picture.setAttribute('aria-label', artworkTitles[art][Number(english)]);
+      picture.src = `image/${filename}`;
+      picture.alt = english ? englishTitle : frenchTitle;
       const description = document.createElement('p');
       description.textContent = english ? secret.dataset.messageEn : secret.dataset.fr;
       item.append(picture, description);
