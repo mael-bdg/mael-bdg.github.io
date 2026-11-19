@@ -107,8 +107,8 @@
 .discovery-item {display:grid;grid-template-columns:72px 1fr;align-items:center;gap:10px;min-height:65px}
 .discovery-item p {font-size:.84rem;line-height:1.4}
 .collectible-art {
-  display:block;aspect-ratio:1;border-radius:5px;border:1px solid #86647e;
-  background:#30233b url('image/souvenirs.webp') no-repeat var(--art-x) center / 300% 100%;
+  display:block;width:100%;aspect-ratio:1;object-fit:contain;
+  border-radius:5px;border:1px solid #86647e;background:#30233b;
 }
 .discovery-empty {font-size:.84rem;line-height:1.5;color:var(--muted)}
 .map-avatar.is-riding canvas {visibility:hidden}
